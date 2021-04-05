@@ -50,7 +50,6 @@ const redisClient = redis.createClient({
 const router = require('./router.js');
 
 const app = express();
-app.use('/assets', express.static(path.resolve(`${__dirname}/../hosted/`)));
 app.use(favicon(`${__dirname}/../hosted/img/favicon.png`));
 app.disable('x-powered-by');
 app.use(compression());
@@ -71,7 +70,7 @@ app.engine('handlebars', handlebars({ defaultLayout: 'main' }));
 app.set('view engine', 'handlebars');
 app.set('views', `${__dirname}/../views`);
 app.use(cookieParser());
-app.use(csrf());
+app.use(csrf({cookie: true}));
 app.use((err, req, res, next) => {
 	console.log(err);
   if (!err || err.code !== 'EBADCSRFTOKEN') {
@@ -80,6 +79,7 @@ app.use((err, req, res, next) => {
   console.log('Missing CSRF token');
   return false;
 });
+app.use('/assets', express.static(path.resolve(`${__dirname}/../hosted/`)));
 
 router(app);
 
