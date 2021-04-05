@@ -62,10 +62,7 @@ app.use(session({
   }),
   secret: 'Domo Arigato',
   resave: true,
-  saveUninitialized: true,
-  cookie: {
-    httpOnly: true,
-  },
+  saveUninitialized: true
 }));
 app.engine('handlebars', handlebars({ defaultLayout: 'main' }));
 app.set('view engine', 'handlebars');
