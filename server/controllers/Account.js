@@ -55,14 +55,12 @@ const signup = (request, response) => {
     };
 
     const newAcc = new Account.AccountModel(accData);
-    const savePromise = newAcc.save();
-
-    savePromise.then(() => {
+    const savePromise = newAcc.save()
+    .then(() => {
       req.session.account = Account.AccountModel.toAPI(newAcc);
       res.json({ redirect: '/maker' });
-    });
-
-    savePromise.catch((err) => {
+    })
+    .catch((err) => {
       console.log(err);
 
       if (err.code === 11000) {
