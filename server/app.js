@@ -70,9 +70,9 @@ app.engine('handlebars', handlebars({ defaultLayout: 'main' }));
 app.set('view engine', 'handlebars');
 app.set('views', `${__dirname}/../views`);
 app.use(cookieParser());
-app.use(csrf({cookie: true}));
+app.use(csrf({ cookie: true }));
 app.use((err, req, res, next) => {
-	console.log(err);
+  console.log(err);
   if (!err || err.code !== 'EBADCSRFTOKEN') {
     return next(err);
   }

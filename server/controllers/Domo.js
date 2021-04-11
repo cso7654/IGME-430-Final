@@ -2,6 +2,20 @@ const models = require('../models');
 
 const { Domo } = models;
 
+const getDomos = (request, response) => {
+  const req = request;
+  const res = response;
+
+  return Domo.DomoModel.findByOwner(req.session.account._id, (err, docs) => {
+    if (err) {
+      console.log(err);
+      return res.status(400).json({ error: 'An error occured' });
+    }
+
+    return res.json({ domos: docs });
+  });
+};
+
 const makerPage = (req, res) => {
   Domo.DomoModel.findByOwner(req.session.account._id, (err, docs) => {
     if (err) {
@@ -43,3 +57,4 @@ const makeDomo = (req, res) => {
 
 module.exports.makerPage = makerPage;
 module.exports.makeDomo = makeDomo;
+module.exports.getDomos = getDomos;
