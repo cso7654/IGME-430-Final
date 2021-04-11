@@ -24,6 +24,7 @@ const DomoSchema = new mongoose.Schema({
     type: String,
     required: true,
     trim: true,
+    set: setName
   },
   owner: {
     type: mongoose.Schema.ObjectId,
@@ -46,7 +47,7 @@ DomoSchema.statics.findByOwner = (ownerID, callback) => {
   const search = {
     owner: convertID(ownerID),
   };
-  return DomoModel.find(search).select('name age').lean().exec(callback);
+  return DomoModel.find(search).select('name age hobby').lean().exec(callback);
 };
 
 DomoModel = mongoose.model('Domo', DomoSchema);
