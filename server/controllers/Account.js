@@ -55,20 +55,20 @@ const signup = (request, response) => {
     };
 
     const newAcc = new Account.AccountModel(accData);
-    const savePromise = newAcc.save()
-    .then(() => {
-      req.session.account = Account.AccountModel.toAPI(newAcc);
-      res.json({ redirect: '/maker' });
-    })
-    .catch((err) => {
-      console.log(err);
+    newAcc.save()
+      .then(() => {
+        req.session.account = Account.AccountModel.toAPI(newAcc);
+        res.json({ redirect: '/maker' });
+      })
+      .catch((err) => {
+        console.log(err);
 
-      if (err.code === 11000) {
-        return res.status(400).json({ error: 'Username already in use' });
-      }
+        if (err.code === 11000) {
+          return res.status(400).json({ error: 'Username already in use' });
+        }
 
-      return res.status(400).json({ error: 'An error occured' });
-    });
+        return res.status(400).json({ error: 'An error occured' });
+      });
   });
 };
 

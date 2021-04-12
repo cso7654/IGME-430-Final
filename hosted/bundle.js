@@ -12,7 +12,16 @@ var handleDomo = function handleDomo(e) {
   }
 
   sendAjax("POST", $("#domoForm").attr("action"), $("#domoForm").serialize(), function () {
-    loadDomosFromServer();
+    loadDomosFromServer($("#csrfToken").val());
+  });
+  return false;
+};
+
+var handleDelete = function handleDelete(e) {
+  e.preventDefault();
+  var target = e.target;
+  sendAjax("POST", $(target).attr("action"), $(target).serialize(), function () {
+    loadDomosFromServer($("#csrfToken").val());
   });
   return false;
 };
@@ -47,6 +56,7 @@ var DomoForm = function DomoForm(props) {
     type: "text",
     placeholder: "Domo Hobby"
   }), /*#__PURE__*/React.createElement("input", {
+    id: "csrfToken",
     type: "hidden",
     name: "_csrf",
     value: props.csrf
@@ -80,17 +90,34 @@ var DomoList = function DomoList(props) {
       className: "domoAge"
     }, " Age: ", domo.age, " "), /*#__PURE__*/React.createElement("h3", {
       className: "domoHobby"
-    }, " Hobby: ", domo.hobby, " "));
+    }, " Hobby: ", domo.hobby, " "), /*#__PURE__*/React.createElement("form", {
+      action: "/delete",
+      onSubmit: handleDelete,
+      method: "POST"
+    }, /*#__PURE__*/React.createElement("input", {
+      type: "hidden",
+      name: "id",
+      value: domo._id
+    }), /*#__PURE__*/React.createElement("input", {
+      type: "hidden",
+      name: "_csrf",
+      value: props.csrf
+    }), /*#__PURE__*/React.createElement("input", {
+      type: "submit",
+      value: "Delete Domo",
+      className: "deleteButton"
+    })));
   });
   return /*#__PURE__*/React.createElement("div", {
     className: "domoList"
   }, domoNodes);
 };
 
-var loadDomosFromServer = function loadDomosFromServer() {
+var loadDomosFromServer = function loadDomosFromServer(csrf) {
   sendAjax("GET", "/getDomos", null, function (data) {
     ReactDOM.render( /*#__PURE__*/React.createElement(DomoList, {
-      domos: data.domos
+      domos: data.domos,
+      csrf: csrf
     }), document.querySelector("#domos"));
   });
 };
@@ -100,9 +127,10 @@ var setup = function setup(csrf) {
     csrf: csrf
   }), document.querySelector("#makeDomo"));
   ReactDOM.render( /*#__PURE__*/React.createElement(DomoList, {
-    domos: []
+    domos: [],
+    csrf: csrf
   }), document.querySelector("#domos"));
-  loadDomosFromServer();
+  loadDomosFromServer(csrf);
 };
 
 var getToken = function getToken() {

@@ -41,13 +41,30 @@ const makeDomo = (req, res) => {
 
   const newDomo = new Domo.DomoModel(domoData);
 
-  const domoPromise = newDomo.save().then(() => res.json({ redirect: '/maker' })).catch((err) => {
-    console.log(err);
-    if (err.code === 11000) {
-      return res.status(400).json({ error: 'Domo already exists' });
-    }
-    return res.status(400).json({ error: 'An error occured' });
-  });
+  const domoPromise = newDomo.save()
+    .then(() => res.json({ redirect: '/maker' }))
+    .catch((err) => {
+      console.log(err);
+      if (err.code === 11000) {
+        return res.status(400).json({ error: 'Domo already exists' });
+      }
+      return res.status(400).json({ error: 'An error occured' });
+    });
+
+  return domoPromise;
+};
+
+const deleteDomo = (req, res) => {
+  if (!req.body.id) {
+    return res.status(400).json({ error: 'No ID provided for deletion' });
+  }
+
+  const domoPromise = Domo.DomoModel.deleteOne({ _id: req.body.id })
+    .then(() => res.json({ redirect: '/maker' }))
+    .catch((err) => {
+      console.log(err);
+      return res.status(400).json({ error: 'RAWR! Could not delete domo!' });
+    });
 
   return domoPromise;
 };
@@ -55,3 +72,4 @@ const makeDomo = (req, res) => {
 module.exports.makerPage = makerPage;
 module.exports.makeDomo = makeDomo;
 module.exports.getDomos = getDomos;
+module.exports.deleteDomo = deleteDomo;
