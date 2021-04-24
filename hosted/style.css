@@ -50,7 +50,6 @@ nav:nth-child(1) {
 .domoForm {
     border: 2px solid #338acc;
     height: 35px;
-    width: 700px;
     margin-top:0px;
     padding-top:10px;
     background-color: #55acee;
@@ -190,7 +189,7 @@ nav:nth-child(1) {
 }
 
 #domos {
-    width: 40%;
+    width: 50%;
     min-width: 400px;
     border: 2px solid #55acee;
     border-radius: 4px;
@@ -245,9 +244,18 @@ h3.domoName {
 }
 
 h3.domoAge {
-    float:right;
+    float:left;
     text-align: left;
     width: 100px;
+    font-weight: bold;
+    padding-right: 20px;
+    font-size: 1.5em;
+}
+
+h3.domoHobby {
+    float:left;
+    text-align: left;
+    width: 200px;
     font-weight: bold;
     padding-right: 40px;
     font-size: 1.5em;
@@ -259,4 +267,14 @@ h3.domoAge {
 
 .domo:last-child {
     margin-bottom:10px;
+}
+
+.deleteButton {
+    transition: background-color 0.4s ease;
+    width: 90px;
+    background-color: #55acee;
+    border-radius: 2px;
+    color: white;
+    text-decoration: none;
+	float: right;
 }
