@@ -71,19 +71,22 @@ var SignupWindow = function SignupWindow(props) {
     type: "submit",
     value: "Create Account"
   }));
-};
+}; //Make window a login window
+
 
 var createLoginWindow = function createLoginWindow(csrf) {
   ReactDOM.render( /*#__PURE__*/React.createElement(LoginWindow, {
     csrf: csrf
   }), document.querySelector("#content"));
-};
+}; //Make window a signup window
+
 
 var createSignupWindow = function createSignupWindow(csrf) {
   ReactDOM.render( /*#__PURE__*/React.createElement(SignupWindow, {
     csrf: csrf
   }), document.querySelector("#content"));
-};
+}; //Setup the login/signup page
+
 
 var setup = function setup(csrf) {
   var loginButton = document.querySelector("#loginButton");
@@ -99,7 +102,8 @@ var setup = function setup(csrf) {
     return false;
   });
   createLoginWindow(csrf);
-};
+}; //Generate CSRF
+
 
 var getToken = function getToken() {
   sendAjax("GET", "/getToken", null, function (result) {
@@ -113,16 +117,12 @@ $(document).ready(function () {
 "use strict";
 
 var handleError = function handleError(message) {
-  $("#errorMessage").text(message);
-  $("#domoMessage").animate({
-    width: "toggle"
-  }, 350);
+  //   $("#errorMessage").text(message);
+  window.alert(message); //   $("#errorMessage").animate({width:"toggle"}, 350);
 };
 
 var redirect = function redirect(response) {
-  $("#domoMessage").animate({
-    width: "hide"
-  }, 350);
+  //   $("#errorMessage").animate({width:"hide"}, 350);
   window.location = response.redirect;
 };
 
@@ -142,13 +142,10 @@ var sendAjax = function sendAjax(type, action, data, success) {
 };
 
 var handleLogin = function handleLogin(e) {
-  e.preventDefault();
-  $("#domoMessage").animate({
-    width: "hide"
-  }, 350);
+  e.preventDefault(); //   $("#errorMessage").animate({width:"hide"}, 350);
 
   if ($("#user").val() == "" || $("#pass").val() == "") {
-    handleError("RAWR! Username or password is empty!");
+    handleError("Username or password is empty!");
     return false;
   }
 
@@ -161,12 +158,12 @@ var handleSignup = function handleSignup(e) {
   e.preventDefault();
 
   if ($("#user").val() == "" || $("#pass").val() == "" || $("#pass2").val() == "") {
-    handleError("RAWR! All fields are required!");
+    handleError("All fields are required!");
     return false;
   }
 
   if ($("#pass").val() !== $("#pass2").val()) {
-    handleError("RAWR! Passwords do not match!");
+    handleError("Passwords do not match!");
     return false;
   }
 

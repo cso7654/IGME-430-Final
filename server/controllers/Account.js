@@ -2,10 +2,12 @@ const models = require('../models');
 
 const { Account } = models;
 
+// Login to the site
 const loginPage = (req, res) => {
   res.render('login', { csrfToken: req.csrfToken() });
 };
 
+// Logout of the site
 const logout = (req, res) => {
   req.session.destroy();
   res.redirect('/');
@@ -28,10 +30,11 @@ const login = (request, response) => {
 
     req.session.account = Account.AccountModel.toAPI(account);
 
-    return res.json({ redirect: '/maker' });
+    return res.json({ redirect: '/user' });
   });
 };
 
+// Signup and create a new user
 const signup = (request, response) => {
   const req = request;
   const res = response;
@@ -58,7 +61,7 @@ const signup = (request, response) => {
     newAcc.save()
       .then(() => {
         req.session.account = Account.AccountModel.toAPI(newAcc);
-        res.json({ redirect: '/maker' });
+        res.json({ redirect: '/user' });
       })
       .catch((err) => {
         console.log(err);

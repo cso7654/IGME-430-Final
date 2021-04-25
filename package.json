@@ -1,11 +1,11 @@
 {
-  "name": "Logins",
+  "name": "charactermanager",
   "version": "1.0.0",
   "engines": {
     "node": "v15.8.0",
     "npm": "7.5.1"
   },
-  "description": "A Simple Login Example using Node.js, Mongo and Redis",
+  "description": "A small manager for RPG characters",
   "main": "./server/app.js",
   "scripts": {
     "build": "npm run buildLoginBundle && npm run buildAppBundle",
@@ -14,10 +14,10 @@
     "start": "node ./server/app.js",
     "pretest": "eslint ./server --fix",
     "test": "echo \"Tests complete\"",
-	"buildLoginBundle": "babel ./client/login ./client/helper --presets @babel/preset-react --out-file ./hosted/loginBundle.js",
-	"buildAppBundle": "babel ./client/app ./client/helper --presets @babel/preset-react --out-file ./hosted/bundle.js",
-	"watchLoginBundle": "babel --watch ./client/login ./client/helper --presets @babel/preset-react --out-file ./hosted/loginBundle.js",
-	"watchAppBundle": "babel --watch ./client/app ./client/helper --presets @babel/preset-react --out-file ./hosted/bundle.js"
+    "buildLoginBundle": "babel ./client/login ./client/helper --presets @babel/preset-react --out-file ./hosted/loginBundle.js",
+    "buildAppBundle": "babel ./client/app ./client/helper --presets @babel/preset-react --out-file ./hosted/bundle.js",
+    "watchLoginBundle": "babel --watch ./client/login ./client/helper --presets @babel/preset-react --out-file ./hosted/loginBundle.js",
+    "watchAppBundle": "babel --watch ./client/app ./client/helper --presets @babel/preset-react --out-file ./hosted/bundle.js"
   },
   "keywords": [
     "Node",
@@ -25,7 +25,7 @@
     "Redis",
     "Login"
   ],
-  "author": "Cody Van De Mark",
+  "author": "Cameron Olson (base by Cody Van De Mark)",
   "license": "Apache 2.0",
   "devDependencies": {
     "@babel/cli": "^7.8.4",

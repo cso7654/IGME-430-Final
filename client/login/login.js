@@ -26,6 +26,7 @@ const SignupWindow = (props) => {
   );
 }
 
+//Make window a login window
 const createLoginWindow = (csrf) => {
 	ReactDOM.render(
 	  <LoginWindow csrf={csrf}></LoginWindow>,
@@ -33,6 +34,7 @@ const createLoginWindow = (csrf) => {
 	);
 }
 
+//Make window a signup window
 const createSignupWindow = (csrf) => {
 	ReactDOM.render(
 		<SignupWindow csrf={csrf}></SignupWindow>,
@@ -40,6 +42,7 @@ const createSignupWindow = (csrf) => {
 	)
 }
 
+//Setup the login/signup page
 const setup = (csrf) => {
 	const loginButton = document.querySelector("#loginButton");
 	const signupButton = document.querySelector("#signupButton");
@@ -57,6 +60,7 @@ const setup = (csrf) => {
 	createLoginWindow(csrf);
 }
 
+//Generate CSRF
 const getToken = () => {
 	sendAjax("GET", "/getToken", null, (result) => {
 		setup(result.csrfToken);

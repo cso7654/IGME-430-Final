@@ -1,137 +1,209 @@
 "use strict";
 
-var handleDomo = function handleDomo(e) {
+//Create a character
+var handleCreate = function handleCreate(e) {
   e.preventDefault();
-  $("#domoMessage").animate({
+  $("#errorMessage").animate({
     width: "hide"
   }, 350);
 
-  if ($("#domoName").val() == "" || $("#domoAge").val() == "" || $("#domoHobby").val() == "") {
-    handleError("RAWR! All fields are required!");
+  if ($("#charName").val() == "" || $("#charClass").val() == "" || $("#charLevel").val() == "") {
+    handleError("All fields are required!");
     return false;
   }
 
-  sendAjax("POST", $("#domoForm").attr("action"), $("#domoForm").serialize(), function () {
-    loadDomosFromServer($("#csrfToken").val());
+  sendAjax("POST", $("#charForm").attr("action"), $("#charForm").serialize(), function () {
+    loadCharsFromServer($("#csrfToken").val());
   });
   return false;
-};
+}; //Search for a character
+
+
+var handleSearch = function handleSearch(e) {
+  e.preventDefault();
+
+  if ($("#searchName").val() == "") {
+    handleError("Name required to search!");
+    return false;
+  } // sendAjax("POST", $("#searchForm").attr("action"), $("#searchForm").serialize(), function(){
+  // 	loadCharsByNameFromServer($("#csrfToken").val(), $("#searchName").val());
+  // });
+
+
+  loadCharsByNameFromServer($("#csrfToken").val(), $("#searchName").val());
+  return false;
+}; //Clear search results
+
+
+var clearSearch = function clearSearch(e) {
+  e.preventDefault();
+  loadCharsFromServer($("#csrfToken").val());
+  return false;
+}; //Delete a character
+
 
 var handleDelete = function handleDelete(e) {
   e.preventDefault();
   var target = e.target;
   sendAjax("POST", $(target).attr("action"), $(target).serialize(), function () {
-    loadDomosFromServer($("#csrfToken").val());
+    loadCharsFromServer($("#csrfToken").val());
   });
   return false;
-};
+}; //The form for creating a character
 
-var DomoForm = function DomoForm(props) {
+
+var CharForm = function CharForm(props) {
   return /*#__PURE__*/React.createElement("form", {
-    id: "domoForm",
-    onSubmit: handleDomo,
-    name: "domoForm",
-    action: "/maker",
+    id: "charForm",
+    onSubmit: handleCreate,
+    name: "charForm",
+    action: "/user",
     method: "POST",
-    className: "domoForm"
+    className: "charForm"
   }, /*#__PURE__*/React.createElement("label", {
     htmlFor: "name"
   }, "Name: "), /*#__PURE__*/React.createElement("input", {
-    id: "domoName",
+    id: "charName",
     name: "name",
     type: "text",
-    placeholder: "Domo Name"
+    placeholder: "Character Name"
   }), /*#__PURE__*/React.createElement("label", {
-    htmlFor: "age"
-  }, "Age: "), /*#__PURE__*/React.createElement("input", {
-    id: "domoAge",
-    name: "age",
+    htmlFor: "class"
+  }, "Class: "), /*#__PURE__*/React.createElement("input", {
+    id: "charClass",
+    name: "class",
     type: "text",
-    placeholder: "Domo Age"
+    placeholder: "Character Class"
   }), /*#__PURE__*/React.createElement("label", {
-    htmlFor: "hobby"
-  }, "Hobby: "), /*#__PURE__*/React.createElement("input", {
-    id: "domoHobby",
-    name: "hobby",
+    htmlFor: "level"
+  }, "Level: "), /*#__PURE__*/React.createElement("input", {
+    id: "charLevel",
+    name: "level",
     type: "text",
-    placeholder: "Domo Hobby"
+    placeholder: "Character Level"
   }), /*#__PURE__*/React.createElement("input", {
     id: "csrfToken",
     type: "hidden",
     name: "_csrf",
     value: props.csrf
   }), /*#__PURE__*/React.createElement("input", {
-    className: "makeDomoSubmit",
+    className: "makeCharSubmit",
     type: "submit",
-    value: "Make Domo"
+    value: "Make Character"
   }));
-};
+}; //Form for searching for a character
 
-var DomoList = function DomoList(props) {
-  if (props.domos.length == 0) {
+
+var CharSearch = function CharSearch(props) {
+  return /*#__PURE__*/React.createElement("div", {
+    id: "search"
+  }, /*#__PURE__*/React.createElement("form", {
+    id: "searchForm",
+    onSubmit: handleSearch,
+    name: "searchForm",
+    action: "/findChars",
+    method: "POST",
+    className: "charForm"
+  }, /*#__PURE__*/React.createElement("label", {
+    htmlFor: "name"
+  }, "Name: "), /*#__PURE__*/React.createElement("input", {
+    id: "searchName",
+    name: "name",
+    type: "text",
+    placeholder: "Character Name"
+  }), /*#__PURE__*/React.createElement("input", {
+    type: "hidden",
+    name: "_csrf",
+    value: props.csrf
+  }), /*#__PURE__*/React.createElement("input", {
+    className: "findCharSubmit",
+    type: "submit",
+    value: "Find Character"
+  })), /*#__PURE__*/React.createElement("form", {
+    id: "searchClear",
+    onSubmit: clearSearch
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "submit",
+    value: "Clear Search"
+  })));
+}; //Display a user's characters in a list
+
+
+var CharList = function CharList(props) {
+  if (props.chars.length == 0) {
     return /*#__PURE__*/React.createElement("div", {
-      className: "domoList"
-    }, /*#__PURE__*/React.createElement("h3", {
-      className: "emptyDomo"
-    }, "No Domos Yet"));
+      className: "charList"
+    }, /*#__PURE__*/React.createElement("h3", null, "No Characters"));
   }
 
-  var domoNodes = props.domos.map(function (domo) {
+  var nodes = props.chars.map(function (_char) {
     return /*#__PURE__*/React.createElement("div", {
-      key: domo._id,
-      className: "domo"
-    }, /*#__PURE__*/React.createElement("img", {
-      src: "/assets/img/domoface.jpeg",
-      alt: "domo face",
-      className: "domoFace"
-    }), /*#__PURE__*/React.createElement("h3", {
-      className: "domoName"
-    }, " Name: ", domo.name, " "), /*#__PURE__*/React.createElement("h3", {
-      className: "domoAge"
-    }, " Age: ", domo.age, " "), /*#__PURE__*/React.createElement("h3", {
-      className: "domoHobby"
-    }, " Hobby: ", domo.hobby, " "), /*#__PURE__*/React.createElement("form", {
+      key: _char._id,
+      className: "char"
+    }, /*#__PURE__*/React.createElement("h3", {
+      className: "charName"
+    }, " Name: ", _char.name, " "), /*#__PURE__*/React.createElement("h3", {
+      className: "charClass"
+    }, " Class: ", _char["class"], " "), /*#__PURE__*/React.createElement("h3", {
+      className: "charLevel"
+    }, " Level: ", _char.level, " "), /*#__PURE__*/React.createElement("form", {
       action: "/delete",
       onSubmit: handleDelete,
       method: "POST"
     }, /*#__PURE__*/React.createElement("input", {
       type: "hidden",
       name: "id",
-      value: domo._id
+      value: _char._id
     }), /*#__PURE__*/React.createElement("input", {
       type: "hidden",
       name: "_csrf",
       value: props.csrf
     }), /*#__PURE__*/React.createElement("input", {
       type: "submit",
-      value: "Delete Domo",
+      value: "Delete Character",
       className: "deleteButton"
     })));
   });
   return /*#__PURE__*/React.createElement("div", {
-    className: "domoList"
-  }, domoNodes);
-};
+    className: "charList"
+  }, /*#__PURE__*/React.createElement("h2", null, "Your Characters"), nodes);
+}; //Load all of a user's characters from the server
 
-var loadDomosFromServer = function loadDomosFromServer(csrf) {
-  sendAjax("GET", "/getDomos", null, function (data) {
-    ReactDOM.render( /*#__PURE__*/React.createElement(DomoList, {
-      domos: data.domos,
+
+var loadCharsFromServer = function loadCharsFromServer(csrf) {
+  sendAjax("GET", "/getChars", null, function (data) {
+    ReactDOM.render( /*#__PURE__*/React.createElement(CharList, {
+      chars: data.chars,
       csrf: csrf
-    }), document.querySelector("#domos"));
+    }), document.querySelector("#characters"));
   });
-};
+}; //Search for chars from the server by name
+
+
+var loadCharsByNameFromServer = function loadCharsByNameFromServer(csrf, name) {
+  // document.querySelector
+  sendAjax("POST", "/findChars", {
+    name: name,
+    _csrf: csrf
+  }, function (data) {
+    ReactDOM.render( /*#__PURE__*/React.createElement(CharList, {
+      chars: data.chars,
+      csrf: csrf
+    }), document.querySelector("#characters"));
+  });
+}; //Setup the page
+
 
 var setup = function setup(csrf) {
-  ReactDOM.render( /*#__PURE__*/React.createElement(DomoForm, {
+  ReactDOM.render( /*#__PURE__*/React.createElement(CharForm, {
     csrf: csrf
-  }), document.querySelector("#makeDomo"));
-  ReactDOM.render( /*#__PURE__*/React.createElement(DomoList, {
-    domos: [],
+  }), document.querySelector("#makeChar"));
+  ReactDOM.render( /*#__PURE__*/React.createElement(CharSearch, {
     csrf: csrf
-  }), document.querySelector("#domos"));
-  loadDomosFromServer(csrf);
-};
+  }), document.querySelector("#searchChar"));
+  loadCharsFromServer(csrf);
+}; //Generate a CSRF token
+
 
 var getToken = function getToken() {
   sendAjax("GET", "/getToken", null, function (result) {
@@ -145,16 +217,12 @@ $(document).ready(function () {
 "use strict";
 
 var handleError = function handleError(message) {
-  $("#errorMessage").text(message);
-  $("#domoMessage").animate({
-    width: "toggle"
-  }, 350);
+  //   $("#errorMessage").text(message);
+  window.alert(message); //   $("#errorMessage").animate({width:"toggle"}, 350);
 };
 
 var redirect = function redirect(response) {
-  $("#domoMessage").animate({
-    width: "hide"
-  }, 350);
+  //   $("#errorMessage").animate({width:"hide"}, 350);
   window.location = response.redirect;
 };
 
@@ -174,13 +242,10 @@ var sendAjax = function sendAjax(type, action, data, success) {
 };
 
 var handleLogin = function handleLogin(e) {
-  e.preventDefault();
-  $("#domoMessage").animate({
-    width: "hide"
-  }, 350);
+  e.preventDefault(); //   $("#errorMessage").animate({width:"hide"}, 350);
 
   if ($("#user").val() == "" || $("#pass").val() == "") {
-    handleError("RAWR! Username or password is empty!");
+    handleError("Username or password is empty!");
     return false;
   }
 
@@ -193,12 +258,12 @@ var handleSignup = function handleSignup(e) {
   e.preventDefault();
 
   if ($("#user").val() == "" || $("#pass").val() == "" || $("#pass2").val() == "") {
-    handleError("RAWR! All fields are required!");
+    handleError("All fields are required!");
     return false;
   }
 
   if ($("#pass").val() !== $("#pass2").val()) {
-    handleError("RAWR! Passwords do not match!");
+    handleError("Passwords do not match!");
     return false;
   }
 
