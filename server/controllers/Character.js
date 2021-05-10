@@ -32,6 +32,21 @@ const getCharactersByName = (request, response) => {
   });
 };
 
+// Get a specific character by its id
+const getCharacter = (request, response) => {
+  const req = request;
+  const res = response;
+
+  return Character.CharacterModel.findByID(req.body.id, (err, docs) => {
+    if (err) {
+      console.log(err);
+      return res.status(400).json({ error: 'An error occured' });
+    }
+
+    return res.json({ char: docs[0] });
+  });
+};
+
 // Go to the user's page (lists all characters)
 const userPage = (req, res) => {
   Character.CharacterModel.findByOwner(req.session.account._id, (err, docs) => {
@@ -46,7 +61,7 @@ const userPage = (req, res) => {
 
 // Create a new character
 const makeCharacter = (req, res) => {
-  if (!req.body.name || !req.body.class || !req.body.level) {
+  if (!req.body.name || !req.body.class || !req.body.level || !req.body.system || !req.body.stats) {
     return res.status(400).json({ error: 'All fields are required!' });
   }
 
@@ -54,6 +69,8 @@ const makeCharacter = (req, res) => {
     name: req.body.name,
     class: req.body.class,
     level: req.body.level,
+    system: req.body.system,
+    stats: req.body.stats,
     owner: req.session.account._id,
   };
 
@@ -93,3 +110,4 @@ module.exports.makeCharacter = makeCharacter;
 module.exports.getCharacters = getCharacters;
 module.exports.deleteCharacter = deleteCharacter;
 module.exports.getCharactersByName = getCharactersByName;
+module.exports.getCharacter = getCharacter;

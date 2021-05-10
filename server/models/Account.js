@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
+mongoose.set('useFindAndModify', false);
 
 let AccountModel = {};
 const iterations = 10000;
@@ -40,12 +41,11 @@ AccountSchema.statics.toAPI = (doc) => ({
 // Check if a password matches what is stored
 const validatePassword = (doc, password, callback) => {
   const pass = doc.password;
-
-  return crypto.pbkdf2(password, doc.salt, iterations, keyLength, 'RSA-SHA512', (err, hash) => {
-    if (hash.toString('hex') !== pass) {
-      return callback(false);
+  crypto.pbkdf2(password, doc.salt.buffer, iterations, keyLength, 'RSA-SHA512', (err, hash) => {
+    if (!err && hash.toString('hex') === pass) {
+      return callback(true);
     }
-    return callback(true);
+    return callback(false);
   });
 };
 
@@ -55,13 +55,17 @@ AccountSchema.statics.findByUsername = (name, callback) => {
     username: name,
   };
 
-  return AccountModel.findOne(search, callback);
+  return AccountModel.find(search).select('username salt password').lean().exec(callback);
 };
 
 // Generate a hash for the password storage
 AccountSchema.statics.generateHash = (password, callback) => {
   const salt = crypto.randomBytes(saltLength);
 
+  crypto.pbkdf2(password, salt, iterations, keyLength, 'RSA-SHA512', (err, hash) => callback(salt, hash.toString('hex')));
+};
+
+AccountSchema.statics.hashPassword = (password, salt, callback) => {
   crypto.pbkdf2(password, salt, iterations, keyLength, 'RSA-SHA512', (err, hash) => callback(salt, hash.toString('hex')));
 };
 
@@ -76,9 +80,9 @@ AccountSchema.statics.authenticate = (username, password, callback) => {
       return callback();
     }
 
-    return validatePassword(doc, password, (result) => {
+    return validatePassword(doc[0], password, (result) => {
       if (result === true) {
-        return callback(null, doc);
+        return callback(null, doc[0]);
       }
 
       return callback();

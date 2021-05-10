@@ -12,21 +12,13 @@
 </head>
 <body>
   <nav id="nav">
-	  <a href="/login"> Home
-  	{{!-- <img id="logo" src="/assets/img/face.png" alt="face logo"/> --}}
-	  </a>
-    <div class="navlink"><a href="/logout">Log out</a></div>
+	<a href="/login">Home</a>
+    <a href="/logout">Log out</a>
+	<a id="accountLink">Account</a>
   </nav>
-  <section id="makeChar">
+  <input type="hidden" id="csrfToken">
+  <section id="content">
   </section>
-  <section id="searchChar">
-  </section>
-  <section id="characters">
-  </section>
-  {{!-- <div id="domoMessage"><img id="speech" src="/assets/img/speech.png" alt="speech box"/>
-    <h3><span id="errorMessage"></span></h3><img id="domo" src="assets/img/domo.png" alt="domo"/>
-  </div> --}}
-  {{!-- <h3 id="errorMessage"></h3> --}}
   <script src="/assets/bundle.js"></script>
 </body>
 </html>

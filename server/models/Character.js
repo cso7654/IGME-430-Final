@@ -23,6 +23,14 @@ const CharacterSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  system: {
+    type: String,
+    required: true,
+  },
+  stats: {
+    type: String,
+    required: true,
+  },
   owner: {
     type: mongoose.Schema.ObjectId,
     required: true,
@@ -39,6 +47,8 @@ CharacterSchema.statics.toAPI = (doc) => ({
   name: doc.name,
   class: doc.class,
   level: doc.level,
+  system: doc.system,
+  stats: doc.stats,
   owner: doc.owner,
 });
 
@@ -47,7 +57,7 @@ CharacterSchema.statics.findByOwner = (ownerID, callback) => {
   const search = {
     owner: convertID(ownerID),
   };
-  return CharacterModel.find(search).select('name class level').lean().exec(callback);
+  return CharacterModel.find(search).select('name class level system stats').lean().exec(callback);
 };
 
 // Find characters based on their name
@@ -55,14 +65,15 @@ CharacterSchema.statics.findByName = (name, callback) => {
   const search = {
     name,
   };
-  return CharacterModel.find(search).select('name class level').lean().exec(callback);
+  return CharacterModel.find(search).select('name class level system stats').lean().exec(callback);
 };
-// Find characters based on their class
-CharacterSchema.statics.findByClass = (cls, callback) => {
+
+// Find characters based on their ID
+CharacterSchema.statics.findByID = (id, callback) => {
   const search = {
-    class: cls,
+    _id: id,
   };
-  return CharacterModel.find(search).select('name class level').lean().exec(callback);
+  return CharacterModel.find(search).select('name class level system stats').lean().exec(callback);
 };
 
 CharacterModel = mongoose.model('Character', CharacterSchema);

@@ -18,11 +18,12 @@ const login = (request, response) => {
   const res = response;
 
   const username = `${req.body.username}`;
-  const password = `${req.body.pass}`;
+  const password = `${req.body.password}`;
 
-  if (!username || !password) {
+  if (!username || !password || username === undefined || password === undefined) {
     return res.status(400).json({ error: 'Username and password required!' });
   }
+
   return Account.AccountModel.authenticate(username, password, (err, account) => {
     if (err || !account) {
       return res.status(401).json({ error: 'Wrong username or password' });
@@ -31,6 +32,41 @@ const login = (request, response) => {
     req.session.account = Account.AccountModel.toAPI(account);
 
     return res.json({ redirect: '/user' });
+  });
+};
+
+const changePassword = (request, response) => {
+  const req = request;
+  const res = response;
+
+  const pass = `${req.body.newPass}`;
+  const pass2 = `${req.body.confirmNewPass}`;
+
+  if (pass === '' || pass2 === '' || pass === undefined || pass2 === undefined) {
+    return res.status(400).json({ error: 'All fields are required' });
+  }
+  if (pass !== pass2) {
+    return res.status(400).json({ error: 'Both passwords must match' });
+  }
+
+  // Find user
+  return Account.AccountModel.findByUsername(`${req.session.account.username}`, (err, docs) => {
+    if (err || !docs) {
+      return res.status(400).json({ error: `Error: ${err}` });
+    }
+    // Hash the new password with the existing salt
+    return Account.AccountModel.hashPassword(pass, docs[0].salt.buffer, (salt, hash) => {
+      // This was the only way I could update it consistently
+      Account.AccountModel.findOneAndUpdate({ _id: req.session.account._id }, { password: hash },
+        { upsert: true }, (err2) => {
+          if (err2) {
+            return res.status(400).json({ error: `An error occured: ${err2}` });
+          }
+          // Password updated, go back to user page
+          return res.json({ redirect: '/user' });
+        });
+      // return res.status(400).json({ error: 'An error occured' });
+    });
   });
 };
 
@@ -50,7 +86,7 @@ const signup = (request, response) => {
     return res.status(400).json({ error: 'Both passwords must match!' });
   }
 
-  return Account.AccountModel.generateHash(req.body.pass, (salt, hash) => {
+  return Account.AccountModel.generateHash(req.body.password, (salt, hash) => {
     const accData = {
       username: req.body.username,
       salt,
@@ -89,3 +125,4 @@ module.exports.logout = logout;
 module.exports.login = login;
 module.exports.getToken = getToken;
 module.exports.signup = signup;
+module.exports.changePassword = changePassword;

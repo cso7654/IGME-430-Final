@@ -1,6 +1,7 @@
 html, body{
 	background-color: black;
 	padding-top: 5rem;
+	color: white;
 }
 #nav{
 	background-color: dimgray;
@@ -18,8 +19,13 @@ html, body{
 	flex-direction: row;
 	align-items: center;
 }
-#nav>*{
+#nav a{
 	padding-right: 1rem;
+	cursor: pointer;
+	text-decoration: none;
+}
+#nav a:visited{
+	color: white;
 }
 
 #errorMessage{
@@ -54,5 +60,14 @@ html, body{
 .charIcon{
 	width: 5rem;
 	height: 5rem;
+}
+
+#charForm{
+	display: flex;
+	flex-direction: column;
+}
+#charForm>*{
+	margin-top: 0.5rem;
+	margin-bottom: 0.5rem;
 }
 

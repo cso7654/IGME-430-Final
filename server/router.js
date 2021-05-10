@@ -13,9 +13,12 @@ const router = (app) => {
   app.get('/user', mid.requiresLogin, controllers.Character.makerPage);
   app.post('/user', mid.requiresLogin, controllers.Character.makeCharacter);
 
+  app.post('/changePass', mid.requiresLogin, controllers.Account.changePassword);
+
   app.post('/delete', mid.requiresLogin, controllers.Character.deleteCharacter);
 
   app.get('/getChars', mid.requiresLogin, controllers.Character.getCharacters);
+  app.post('/getChar', mid.requiresLogin, controllers.Character.getCharacter);
 
   app.post('/findChars', mid.requiresLogin, controllers.Character.getCharactersByName);
 
